@@ -80,34 +80,42 @@ module MirrorMirrorOnTheWall(Offset_X,Offset_Y){
 }
 // BLUEPRINT_Enviroment
 if (DesignStatus=="printing"){
-    intersection(){
-        //TEST_OBJECT(FN_ExtraFine);
-        cube([1000,1000,1000],center=true);
+FN_FACETES=FN_Fine;
+//$fn = $preview ? 12 : 72;
+    translate([0,0,0]){
+        TEST_OBJECT(FN_FACETES);
+    }
+    translate([0,0,0]){
+    
+    }        
+    translate([0,0,0]){
+        TEST_SPHERE(FN_FACETES);
     }
 }
 // BLUEPRINT_Enviroment
 if(DesignStatus=="fitting"){
-    //TEST_OBJECT(FN_FACETTES=FN_MediumRough);
+    
+
 }
 
 
 // Iterates and coloures the parts distingushable
 if (DesignStatus=="sizing"){
-// $fn = $preview ? 12 : 72; // Facets in preview (F5) set to 12, in Reder (F6) is set to 72
+FN_FACETES = $preview ? 12 : 72; // Facets in preview (F5) set to 12, in Reder (F6) is set to 72
     see_me_in_colourful(){
         translate([0,0,0]){
-            TEST_OBJECT();
+            TEST_OBJECT(FN_FACETES);
         }
         translate([0,0,0]){
         
         }        
         translate([0,0,0]){
-            TEST_SPHERE();
+            TEST_SPHERE(FN_FACETES);
         }
         translate([0,0,0]){
         }
         translate([0,0,0]){
-            TEST_CUTCYLINDER();
+            //TEST_CUTCYLINDER();
         }
         union(){
             
@@ -187,12 +195,12 @@ Intersection_Test_Cut("xy",1.5,16){
 module Assembly(){
 
 }
-module TEST_OBJECT(){
+module TEST_OBJECT(FN_FACETES){
     difference(){
         TEST_CUTCUBE(TestSlab_X,TestSlab_Y,TestSlab_Z);
-        TEST_CUTCYLINDER();
+        TEST_CUTCYLINDER(FN_FACETES);
     }
-    TEST_SPHERE();
+    //TEST_SPHERE();
 }
 
 // ===============================================================================
@@ -209,15 +217,15 @@ module TEST_OBJECT(){
 module TEST_CUTCUBE(X=30,Y=60,Z=15){
     cube([X,Y,Z]);
 }
-module TEST_SPHERE(D=TestSphere_D){
+module TEST_SPHERE(FN_FACETES,D=TestSphere_D){
 //$fn = $preview ? 12 : 72; // Facets in preview (F5) set to 12, in Reder (F6) is set to 72
     difference(){
-        sphere(d=D);
-        TEST_CUTCYLINDER();
+        sphere(d=D,$fn=FN_FACETES);
+        TEST_CUTCYLINDER(FN_FACETES);
     }
 }
-module TEST_CUTCYLINDER(H=TestCylinder_H,D1=TestCylinder_D1,D2=TestCylinder_D2){
-    cylinder(h=H,d1=D1,d2=D2,$fn=24);
+module TEST_CUTCYLINDER(FN_FACETES,H=TestCylinder_H,D1=TestCylinder_D1,D2=TestCylinder_D2){
+    cylinder(h=H,d1=D1,d2=D2,$fn=FN_FACETES);
 }
 
 // ===============================================================================
