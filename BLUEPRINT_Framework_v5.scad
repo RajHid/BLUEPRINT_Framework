@@ -80,9 +80,19 @@ module MirrorMirrorOnTheWall(Offset_X,Offset_Y){
 }
 // BLUEPRINT_Enviroment
 if (DesignStatus=="printing"){
+$fn = $preview ? 12 : 72; // Facets in preview (F5) set to 12, in Reder (F6) is set to 72
     intersection(){
         //TEST_OBJECT(FN_ExtraFine);
-        cube([1000,1000,1000],center=true);
+        //cube([1000,1000,1000],center=true);
+    }
+    translate([0,0,0]){
+        TEST_OBJECT();
+    }
+    translate([0,0,0]){
+        difference(){
+            TEST_SPHERE();
+            TEST_CUTCYLINDER();
+        }
     }
 }
 // BLUEPRINT_Enviroment
