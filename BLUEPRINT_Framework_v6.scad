@@ -23,7 +23,7 @@ TestCylinder_D2=45;
 
 TestSphere_D=42;
 
-!cube(10);
+//!cube(10);
 
 module __Customizer_Limit__ () {}  // before these, the variables are usable in the cutomizer
 shown_by_customizer = false;
@@ -77,20 +77,21 @@ module MirrorMirrorOnTheWall(Offset_X,Offset_Y){
 }
 // BLUEPRINT_Enviroment
 if (DesignStatus=="printing"){
-$fn = $preview ? 12 : 72; // Facets in preview (F5) set to 12, in Reder (F6) is set to 72
-    intersection(){
-        //TEST_OBJECT(FN_ExtraFine);
-        //cube([1000,1000,1000],center=true);
-    }
-    translate([0,0,0]){
-        TEST_OBJECT();
-    }
-    translate([0,0,0]){
-        difference(){
-            TEST_SPHERE();
-            TEST_CUTCYLINDER();
-        }
-    }
+Main_Assembly(36,76,"false");
+//$fn = $preview ? 12 : 72; // Facets in preview (F5) set to 12, in Reder (F6) is set to 72
+//    intersection(){
+//        //TEST_OBJECT(FN_ExtraFine);
+//        //cube([1000,1000,1000],center=true);
+//    }
+//    translate([0,0,0]){
+//        TEST_OBJECT();
+//    }
+//    translate([0,0,0]){
+//        difference(){
+//            TEST_SPHERE();
+//            TEST_CUTCYLINDER();
+//        }
+//    }
 }
 // BLUEPRINT_Enviroment
 if(DesignStatus=="fitting"){
@@ -99,48 +100,51 @@ if(DesignStatus=="fitting"){
         translate([0,0,1]){
             cube([1000,1000,1],center=true);
         }
-        union(){
-            translate([0,0,0]){
-                TEST_OBJECT();
-            }
-            translate([0,0,0]){
-                difference(){
-                    TEST_SPHERE();
-                    TEST_CUTCYLINDER();
-                }
-            }
-        }//TEST_OBJECT(FN_FACETTES=FN_MediumRough);
+        Main_Assembly(16,76,"false");
+//        union(){
+//            translate([0,0,0]){
+//                TEST_OBJECT();
+//            }
+//            translate([0,0,0]){
+//                difference(){
+//                    TEST_SPHERE();
+//                    TEST_CUTCYLINDER();
+//                }
+//            }
+//        }//TEST_OBJECT(FN_FACETTES=FN_MediumRough);
     }
 }
 
 
 // Iterates and coloures the parts distingushable
 if (DesignStatus=="sizing"){
-// $fn = $preview ? 12 : 72; // Facets in preview (F5) set to 12, in Reder (F6) is set to 72
-    see_me_in_colourful(){
-        translate([0,0,0]){
-            TEST_OBJECT();
-        }
-        translate([0,0,0]){
-        }        
-        translate([0,0,0]){
-            TEST_SPHERE();
-        }
-        translate([0,0,0]){
-        }
-        translate([0,0,0]){
-            TEST_CUTCYLINDER();
-        }
-        union(){
-        }
-        translate([ 0,0,0]){
-        }
-    }
+    Main_Assembly(16,36,"true");
+//// $fn = $preview ? 12 : 72; // Facets in preview (F5) set to 12, in Reder (F6) is set to 72
+//    see_me_in_colourful(){
+//        translate([0,0,0]){
+//            TEST_OBJECT();
+//        }
+//        translate([0,0,0]){
+//        }        
+//        translate([0,0,0]){
+//            TEST_SPHERE();
+//        }
+//        translate([0,0,0]){
+//        }
+//        translate([0,0,0]){
+//            TEST_CUTCYLINDER();
+//        }
+//        union(){
+//        }
+//        translate([ 0,0,0]){
+//        }
+//    }
 }
-// Module to help coloring different modules to make  ist easier
-// 
-module ALL_THE_little_THINGS(PARAMETERS){
+// Module to help coloring different modules to make  ist easier 
 
+//Main_Assembly(12,76,true);
+module Main_Assembly(LOW_RESOLUTION=12,HIGH_RESOLUTION=36,CUT_MODULES_RENDERED){
+$fn = $preview ? LOW_RESOLUTION : HIGH_RESOLUTION ; // Facets in preview (F5) set to 12, in Reder (F6) is set to 72
     see_me_in_colourful(){
         translate([0,0,0]){
             TEST_OBJECT();
@@ -149,12 +153,20 @@ module ALL_THE_little_THINGS(PARAMETERS){
         
         }        
         translate([0,0,0]){
-            TEST_SPHERE();
+            difference(){
+                TEST_SPHERE();
+                TEST_CUTCYLINDER();
+            }
         }
         translate([0,0,0]){
         }
         translate([0,0,0]){
-            TEST_CUTCYLINDER();
+            if(CUT_MODULES_RENDERED=="true"){
+                TEST_CUTCYLINDER();
+            }
+            else{
+                echo("CUT_MODULES_RENDERED= ",CUT_MODULES_RENDERED);
+            }
         }
         union(){
             
