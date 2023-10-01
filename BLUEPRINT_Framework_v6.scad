@@ -10,7 +10,7 @@
 // ==================================
 
 // sizing printing or print a small part to test the object.
-DesignStatus="sizing"; // ["sizing","fitting","printing"]
+DesignStatus="sizing"; // ["sizing","fitting","printing","animating"]
 // Variables seen by customizer
 
 TestSlab_X=50;
