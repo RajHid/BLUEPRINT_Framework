@@ -23,11 +23,8 @@ TestCylinder_D2=45;
 
 TestSphere_D=42;
 
-//!cube(10);
-
 module __Customizer_Limit__ () {}  // before these, the variables are usable in the cutomizer
 shown_by_customizer = false;
-
 
 Invisible=42;
 TestslabTransl_X=25;
@@ -45,109 +42,40 @@ FN_MediumRough=16;
 FN_Medium=36;
 FN_Fine=72;
 FN_ExtraFine=144;
-
-// Funktionalety to provide a global switch to set the $fn parameter to lower values to run faster when in development and to set it to heigh and fancy when getting serius about exporting a rocket schaped object to hide in dark spots. 
-
-
 // ==================================
 // = Tuning Variables =
 // ==================================
 // Variables for finetuning (The Slegehammer if something has to be made fit)
-
-// ==================================
-// = Test Stage =
-// ==================================
-
-// BLUEPRINT_Enviroment
-module MirrorMirrorOnTheWall(Offset_X,Offset_Y){
-    translate([-Offset_X,Offset_Y,0]){
-        children();
-        mirror([0,1,0]){
-            children();
-        }
-    }
-    translate([Offset_X,-Offset_Y,0]){
-        mirror([1,0,0]){
-            children();
-            mirror([1,0,0]){
-                children();
-            }
-        }
-    }
-}
-// BLUEPRINT_Enviroment
 if (DesignStatus=="printing"){
-Main_Assembly(36,76,"false");
-//$fn = $preview ? 12 : 72; // Facets in preview (F5) set to 12, in Reder (F6) is set to 72
-//    intersection(){
-//        //TEST_OBJECT(FN_ExtraFine);
-//        //cube([1000,1000,1000],center=true);
-//    }
-//    translate([0,0,0]){
-//        TEST_OBJECT();
-//    }
-//    translate([0,0,0]){
-//        difference(){
-//            TEST_SPHERE();
-//            TEST_CUTCYLINDER();
-//        }
-//    }
+    Main_Assembly(36,76,"false");
 }
-// BLUEPRINT_Enviroment
 if(DesignStatus=="fitting"){
     intersection(){
-        //TEST_OBJECT(FN_ExtraFine);
         translate([0,0,1]){
             cube([1000,1000,1],center=true);
         }
         Main_Assembly(16,76,"false");
-//        union(){
-//            translate([0,0,0]){
-//                TEST_OBJECT();
-//            }
-//            translate([0,0,0]){
-//                difference(){
-//                    TEST_SPHERE();
-//                    TEST_CUTCYLINDER();
-//                }
-//            }
-//        }//TEST_OBJECT(FN_FACETTES=FN_MediumRough);
     }
 }
-
-
-// Iterates and coloures the parts distingushable
 if (DesignStatus=="sizing"){
     Main_Assembly(16,36,"true");
-//// $fn = $preview ? 12 : 72; // Facets in preview (F5) set to 12, in Reder (F6) is set to 72
-//    see_me_in_colourful(){
-//        translate([0,0,0]){
-//            TEST_OBJECT();
-//        }
-//        translate([0,0,0]){
-//        }        
-//        translate([0,0,0]){
-//            TEST_SPHERE();
-//        }
-//        translate([0,0,0]){
-//        }
-//        translate([0,0,0]){
-//            TEST_CUTCYLINDER();
-//        }
-//        union(){
-//        }
-//        translate([ 0,0,0]){
-//        }
-//    }
 }
-// Module to help coloring different modules to make  ist easier 
-
+// ===============================================================================
+// =----- Module to help coloring different modules to make it easier 
+// ===============================================================================
 //Main_Assembly(12,76,true);
 module Main_Assembly(LOW_RESOLUTION=12,HIGH_RESOLUTION=36,CUT_MODULES_RENDERED){
 $fn = $preview ? LOW_RESOLUTION : HIGH_RESOLUTION ; // Facets in preview (F5) set to 12, in Reder (F6) is set to 72
     see_me_in_colourful(){
         translate([0,0,0]){
-            TEST_OBJECT();
+            difference(){
+                TEST_OBJECT();
+                translate([25,40,15]){                    
+                    scale([0.4,0.4,0.4]){        
+                        TEST_CUTCUBE();
+            }
+        }
+    }
         }
         translate([0,0,0]){
         
@@ -155,7 +83,7 @@ $fn = $preview ? LOW_RESOLUTION : HIGH_RESOLUTION ; // Facets in preview (F5) se
         translate([0,0,0]){
             difference(){
                 TEST_SPHERE();
-                TEST_CUTCYLINDER();
+                
             }
         }
         translate([0,0,0]){
@@ -175,48 +103,42 @@ $fn = $preview ? LOW_RESOLUTION : HIGH_RESOLUTION ; // Facets in preview (F5) se
         }
     }
 }
-module see_me_in_colourful(){
-    //difference(){
-        //union(){
-          translate([0,0,0]){
-            for(i=[0:1:$children-1]){
-                a=255;
-                b=50;
-                k_farbabstand=((a-b)/$children);
-                Farbe=((k_farbabstand*i)/255);
-                SINUS_Foo=0.5+(sin(((360/(a-b))*k_farbabstand)*(i+1)))/2;
-                COSIN_Foo=0.5+(cos(((360/(a-b))*k_farbabstand)*(i+1)))/2;
-                color(c = [ SINUS_Foo,
-                            1-(SINUS_Foo/2+COSIN_Foo/2),
-                            COSIN_Foo],
-                            alpha = 0.5){  
-                    //MirrorMirrorOnTheWall(0){
-                    difference(){
-                        //MirrorMirrorOnTheWall(0){
-                            render(convexity=20){children(i);}
-                            //children(i);
-                            translate([70/2,0,0]){
-                                    //cube([80,70,150],center=true);
-                                }
-                        //}
+module see_me_in_colourful(){ // iterates the given modules and colors them automaticly by setting values using trigonometric funktions
+    translate([0,0,0]){
+        for(i=[0:1:$children-1]){
+            a=255;
+            b=50;       // cuts away the dark colors to prevent bad visual contrast to backgound
+            k_farbabstand=((a-b)/$children);
+            Farbe=((k_farbabstand*i)/255);
+            SINUS_Foo=0.5+(sin(((360/(a-b))*k_farbabstand)*(i+1)))/2;
+            COSIN_Foo=0.5+(cos(((360/(a-b))*k_farbabstand)*(i+1)))/2;
+            color(c = [ SINUS_Foo,
+                        1-(SINUS_Foo/2+COSIN_Foo/2),
+                        COSIN_Foo],
+                        alpha = 0.5){  
+                difference(){
+                    render(convexity=10){children(i);} //renders the modules, effect is that inner holes become visible
+                    //children(i);
+                    translate([70/2,0,0]){
+                        //cube([80,90,150],center=true);
+                    }
 // Creates a Cutting to see a Sidesection cut of the objects
-                            color(c = [ SINUS_Foo,
+                    color(c = [ SINUS_Foo,
                                 1-(SINUS_Foo/2+COSIN_Foo/2),
                                 COSIN_Foo],
                                 alpha = 0.0){
-                                translate([70/2,0,0]){
-                                    //cube([10,20,150],center=true);
-                                }
-                                translate([-50,-50,0]){
-                                    //cube([100,50,200],center=false);
-                                    }
-                                }
-                            }
+                        translate([70/2,0,0]){
+                            //cube([30,20,150],center=true);
+                        }
+                        translate([-50,-50,0]){
+                            //cube([100,50,200],center=false);
                         }
                     }
                 }
             }
-// == Testprints ==
+        }
+    }
+}
 
 Projection_Cutter(5){
 //see_me_half();
@@ -471,7 +393,7 @@ module 2D_Rounded_Square_Base_Shape(DIMENSION_X=10,DIMENSION_Y=20,RADIUS=2,CENTE
 // ===============================================================================
 // =--------------------------------- Symetrie Helper ---------------------------=
 // ===============================================================================
-//XY_Symetrie(10,25){cube(10);}
+// XY_Symetrie(10,25){cube(10);}
 module XY_Symetrie(X=10,Y=25){
    translate([X,Y,0]){
        children();
@@ -487,6 +409,22 @@ module XY_Symetrie(X=10,Y=25){
         }
         mirror([1,0,0]){
             translate([X,Y,0]){
+                children();
+            }
+        }
+    }
+}
+module MirrorMirrorOnTheWall(Offset_X,Offset_Y){
+    translate([-Offset_X,Offset_Y,0]){
+        children();
+        mirror([0,1,0]){
+            children();
+        }
+    }
+    translate([Offset_X,-Offset_Y,0]){
+        mirror([1,0,0]){
+            children();
+            mirror([1,0,0]){
                 children();
             }
         }
@@ -509,9 +447,7 @@ module XY_Symetrie(X=10,Y=25){
 2D_Chamfer_DELTA_OUT=2;
 
 // a straigt line on edges and corners
-2D_Chamfer_BOOLEAN=false;
-
-    
+2D_Chamfer_BOOLEAN=false;    
 module Smooth(r=3){
     //$fn=30;
     offset(r=r,$fn=30){
@@ -544,12 +480,10 @@ module Chamfer_INWARD(DELTA_INN=3){
         }
     }
 }
-
 // ===============================================================================
 // =--------------------------------- Ruthex --------------------------------=
 // ===============================================================================
 // Dimensions for Ruthex Tread inseerts
-
 //RUTHEX_M3();
 module RUTHEX_M3(){    
 L=5.7+5.7*0.25; // Length + Margin
@@ -563,11 +497,9 @@ D1=4.0;
         }
     }
 }
-
 // ===============================================================================
 // =--------------------------------- Import STL --------------------------------=
 // ===============================================================================
-
 module NAME_OF_IMPORT(){
     rotate([0,0,-90]){
         translate([-515,-100,-45]){
@@ -575,11 +507,9 @@ module NAME_OF_IMPORT(){
         }
     }
 }
-
 // ===============================================================================
 // =--------------------------------- Import PNG --------------------------------=
 // ===============================================================================
-
 module NAME_OF_IMPORT(){
     rotate([0,0,-90]){
         translate([-515,-100,-45]){
